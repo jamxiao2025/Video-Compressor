@@ -18,6 +18,8 @@ NumPy
 
 OpenCV
 
+Pillow
+
 ## Future Plans
 
 React Frontend
