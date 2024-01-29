@@ -25,4 +25,11 @@ Create a copy of singular values, svc
 Define what k rank your image should be with svc[k:]
 Create k rank image by multiplying left unitary arrays with the product of diagonal matrix created from svc and right unitary arrays3.
 Create a diagonal matrix using the singular values from svc
-Reconstruct the original matrix using SVD components:
+Reconstruct the original matrix using SVD components
+
+
+### Plan Revised (1.29.24)
+
+After some experimenting, I found out the k-rank approximation of images doesn't change the actual size, in bytes, of the original image. 
+
+I think utilizing SVD to get a k-rank approximation of an image is still an integral step in compressing an image, so I'll be researching for other methods that I should combine with SVD to actually reduce image size. 
