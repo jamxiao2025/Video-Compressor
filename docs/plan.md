@@ -32,4 +32,8 @@ Reconstruct the original matrix using SVD components
 
 After some experimenting, I found out the k-rank approximation of images doesn't change the actual size, in bytes, of the original image. 
 
-I think utilizing SVD to get a k-rank approximation of an image is still an integral step in compressing an image, so I'll be researching for other methods that I should combine with SVD to actually reduce image size. 
+I think utilizing SVD to get a k-rank approximation of an image is still an integral step in compressing an image, so I'll be researching for other methods that I should combine with SVD to actually reduce image size.
+
+### Log (1.30.24)
+
+Nevermind, I ran the code again and the compressed image is 3.1 MB, whereas the original image is 5.1 MB. We were able to achieve some degree of compression with SVD! Though I'm not sure how the compression actually works because the shape of the compressed image and original image matrices are the same. Maybe it has something to do with when the matrices are converted to images? 
