@@ -1,45 +1,63 @@
 import os
+import sys
 import numpy as np
 from PIL import Image
+import time
 
-# Specify the filename
-input_filename = "chicken_rice.JPG"
+def calculate_file_size(filepath):
+    return os.path.getsize(filepath)
 
-# Get the current working directory
-current_directory = os.getcwd()
-print(current_directory)
-# Construct the full path
-input_image_path = os.path.join(current_directory, "images", input_filename)
-print(input_image_path)
-# Convert image to grayscale
-image = Image.open(input_image_path).convert('L')  # Convert to grayscale
-image_data = np.array(image)
+def compress_image(input_filename, output_folder, k):
+    # Construct the full path
+    input_image_path = os.path.join("images", input_filename)
 
-print("Done converting from JPG to dat")
-# Save the grayscale image to a folder
-output_folder = os.path.join(current_directory, "output_folder")
-os.makedirs(output_folder, exist_ok=True)  # Create the output folder if it doesn't exist
-output_image_path = os.path.join(output_folder, "grayscale_image.png")  # Change the extension as needed
-Image.fromarray(image_data).save(output_image_path)
+    image = Image.open(input_image_path)
+    image_data = np.array(image)
 
-print("Grayscale image saved to:", output_image_path)
+    # Separate color channels
+    channels = [image_data[:, :, i] for i in range(image_data.shape[2])]
 
-# Use image_data directly
-u, s, vt = np.linalg.svd(image_data, full_matrices=False)
-scopy = s.copy()
-scopy = scopy[:50] 
-compressed_image = u.dot(np.diag(scopy)).dot(vt)
+    compressed_channels = []
+    for channel in channels:
+        # Reshape data for SVD
+        original_shape = channel.shape
+        reshaped_data = channel.reshape((-1,1))
 
-# Save compressed image
-compressed_image_path = os.path.join(output_folder, "compressed_image.png")
-Image.fromarray(compressed_image.astype(np.uint8)).save(compressed_image_path)
+        # Apply SVD to reshaped data
+        u, s, vt = np.linalg.svd(reshaped_data, full_matrices=False)
+        scopy = s.copy()
+        scopy[k:] = 0.0
+        compressed_data = u.dot(np.diag(scopy)).dot(vt)
 
-original_image_size = image_data.size
-compressed_image_size = compressed_image.size
+        # Reshape data to the original state
+        compressed_channel = compressed_data.reshape(original_shape)
+        compressed_channels.append(compressed_channel)
 
-percent_compression = (1 - (compressed_image_size)/(original_image_size)) * 100
+    # Combine compressed channels back into a color image
+    compressed_image_data = np.stack(compressed_channels, axis=-1)
 
-print("Percent Compression: " + str(percent_compression) + "%")
+    # Save compressed image
+    compressed_image_path = os.path.join(output_folder, f"compressed_image_rank_{k}.jpg")
+    Image.fromarray(compressed_image_data.astype(np.uint8)).save(compressed_image_path, "JPEG")
 
+    original_file_size = calculate_file_size(input_image_path)
+    compressed_file_size = calculate_file_size(compressed_image_path)
 
+    print(f"Original File Size: {original_file_size} bytes")
+    print(f"Compressed File Size (Rank {k}): {compressed_file_size} bytes")
+
+    percent_compression = (1 - (compressed_file_size / original_file_size)) * 100
+    print(f"Percent Compression (Rank {k}): {percent_compression}%")
+
+if __name__ == "__main__":
+	if len(sys.argv) != 2:
+		print("Usage: python svd.py <k>")
+		sys.exit(1)
+	k = int(sys.argv[1])
+	input_filename = "chicken_rice.JPG"
+	output_folder = "output_folder"
+	start_time = time.time()
+	compress_image(input_filename, output_folder, k)
+	end_time = time.time()
+	print(f"Time Elapsed: {end_time-start_time} seconds")
 
