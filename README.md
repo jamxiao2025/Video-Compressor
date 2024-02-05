@@ -4,11 +4,9 @@ Creative ( and sub-optimal) hack to compress videos using SVD, inspired by CS506
 
 ## Features to Implement
 
-**SVD Compression:**  Utilizes SVD to compress individual frames of the video.
-
-**Lossless Compression:** Aims to achieve compression with minimal loss of visual quality.
-
-**Efficient Storage:** Reduces the size of video files for efficient storage and transmission.
+#### Lossless Compression - Reversible compression (JPEG methods etc.)
+#### Lossy Compression - Irreversible compression (SVD etc.)
+#### Efficient Storage - Consistent and optimal storage for images/videos
 
 ## Requirements
 
