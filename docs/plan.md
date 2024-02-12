@@ -36,4 +36,9 @@ I think utilizing SVD to get a k-rank approximation of an image is still an inte
 
 ### Log (1.30.24)
 
-Nevermind, I ran the code again and the compressed image is 3.1 MB, whereas the original image is 5.1 MB. We were able to achieve some degree of compression with SVD! Though I'm not sure how the compression actually works because the shape of the compressed image and original image matrices are the same. Maybe it has something to do with when the matrices are converted to images? 
+Nevermind, I ran the code again and the compressed image is 3.1 MB, whereas the original image is 5.1 MB. We were able to achieve some degree of compression with SVD! Though I'm not sure how the compression actually works because the shape of the compressed image and original image matrices are the same. Maybe it has something to do with when the matrices are converted to images?
+
+
+### Log (2.12.24)
+
+Revisiting this code, I wanted to see how much compression I was getting out of a k-rank approximation. My initial assumption that compression and file size changes were only influenced by SVD math was incorrect. I found out that data loss occurs in transformation from image files to arrays etc. I converted the original 3MB image to a numpy array using PIL, and then I converted it back to an image using JPEG format. I didn't touch any of the data, but the new file size was 1MB. Simply converting from image to array already results in a 66% compression rate. I think I'm still a bit confused on wether SVD is used in image compression to reduce the actual file size, or if its used to store a representation of the image in less size (unitary vectors and singular values).   
